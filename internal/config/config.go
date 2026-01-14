@@ -41,7 +41,7 @@ func Load() (Config, error) {
 func extractEnv(key string) (string, error) {
 	val := os.Getenv(key)
 	if val == "" {
-		return "", fmt.Errorf("missing required env")
+		return "", fmt.Errorf("missing required env key")
 	}
 	return val, nil
 }

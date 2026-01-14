@@ -13,6 +13,10 @@ import (
 // Connects to MongoDB 
 // Verifies the connection 
 // Returns: Mongo client, Mongo database, error if something fails
+
+// *mongo.Client :- thik it as the phone you use to talk to your database.
+// It handles the "dialing" (connecting), maintains the "line" (connection pooling),
+// and allows you to send "messages" (queries) back and forth.
 func Connect(cfg config.Config) (*mongo.Client, *mongo.Database, error) {
 	// Prevents the app from freezing forever if MongoDB is unreachable
 	// Gives MongoDB 10 seconds to respond
