@@ -20,3 +20,12 @@ type CreateNoteRequest struct {
 	Content string `json:"content" binding:"required"`
 	Pinned  bool   `json:"pinned"`
 }
+
+// We are creating seprate UpdateNoteRequest because "CreateNoteRequest"
+// have many properties, but we don't allow to update each one thats why
+// we are creating seperate UpdateNoteRequest
+type UpdateNoteRequest struct {
+	Title   string `json:"title" binding:"required"`
+	Content string `json:"content" binding:"required"`
+	Pinned  bool   `json:"pinned"`
+}
