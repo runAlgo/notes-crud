@@ -35,8 +35,7 @@ func (r *Repo) Create(ctx context.Context, note Note) (Note, error) {
 	return note, nil
 }
 
-
-func (r * Repo) List(ctx context.Context) ([]Note, error){
+func (r *Repo) List(ctx context.Context) ([]Note, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -62,7 +61,6 @@ func (r * Repo) List(ctx context.Context) ([]Note, error){
 	return notes, nil
 }
 
-
 func (r *Repo) GetByID(ctx context.Context, id primitive.ObjectID) (Note, error) {
 	opCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 
@@ -78,4 +76,36 @@ func (r *Repo) GetByID(ctx context.Context, id primitive.ObjectID) (Note, error)
 		return Note{}, fmt.Errorf("Find note by id failed: %w", err)
 	}
 	return note, nil
+}
+
+func (r *Repo) UpdateByID(ctx context.Context, id primitive.ObjectID, req UpdateNoteRequest) (Note, error) {
+	opCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	filer := bson.M{"_id": id}
+
+	update := bson.M{
+		"$set": bson.M{
+			"title":     req.Title,
+			"content":   req.Content,
+			"pinned":    req.Pinned,
+			"UpdatedAt": time.Now().UTC(),
+		},
+	}
+
+	after := options.After
+	opts := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+	}
+
+	var updated Note
+
+	err := r.coll.FindOneAndUpdate(opCtx, filer, update, &opts).Decode(&updated)
+
+	if err != nil {
+		return Note{}, fmt.Errorf("Update note failed: %w", err)
+	}
+
+	return updated, nil
+
 }
