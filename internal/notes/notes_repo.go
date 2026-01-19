@@ -109,3 +109,24 @@ func (r *Repo) UpdateByID(ctx context.Context, id primitive.ObjectID, req Update
 	return updated, nil
 
 }
+
+
+
+func (r *Repo) DeleteByID(ctx context.Context, id primitive.ObjectID) (bool, error) {
+	opCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+
+	defer cancel()
+
+	filter := bson.M{"_id": id}
+	
+	res, err := r.coll.DeleteOne(opCtx, filter)
+	if err != nil {
+		return false, fmt.Errorf("Failed to delete the given note: %w", err)
+	}
+
+	if (res.DeletedCount == 0) {
+		return false, nil
+	}
+
+	return true, nil 
+}
